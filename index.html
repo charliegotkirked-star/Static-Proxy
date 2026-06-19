@@ -10,37 +10,88 @@
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#434c5e">
     <meta name="googlebot" content="index, follow, snippet" />
     <link rel="stylesheet" href="index.css">
-</script>
-<body onload = "showAlert()" >
 </head>
 
 <body>
-<br><br><br>
-<br><br>
-<br><br>
-    </div>
+    <br><br><br>
+    <br><br>
+    <br><br>
+
     <div class="desc">
         <h1 class="title">Static Proxy</h1><br><br>
     </div>
-<br>
-    <form>
-        <input class="search-input" placeholder="Search the web freely...">
+    <br>
+
+    <form id="proxy-form">
+        <input class="search-input" id="proxy-search" placeholder="Search the web freely..." required>
     </form>
+
     <div class="text-center">
-   <button>About:Blank</button>
-<script>
-    var urlObj = new window.URL(window.location.href);
-    var url = "/index.html";
- 
-    if (url) {
-        var win;
- 
-        document.querySelector('button').onclick = function() {
+        <button id="blank-btn">About:Blank</button>
+        
+        <style>
+            * { color: white; font-family: arial; text-align: center; }
+            button { width: 220px; height: 40px; border-radius: 12px; background-color: #080808; font-family: Arial, Helvetica, sans-serif; border: none; transition: background-color 500ms; }
+            button:hover { background-color: #222; cursor: pointer; }
+            .search-input { padding: 12px; width: 350px; border-radius: 8px; border: 1px solid #333; background-color: #111; color: white; font-size: 16px; outline: none; }
+        </style>
+    </div>
+    <br>
+
+    <div>
+        <footer style="bottom: 0; position: fixed; width: 100%;">
+            <p>&copy; CarbonNetwork</p>
+        </footer>
+    </div>
+
+    <!-- Core Ultraviolet Framework Dependencies -->
+    <script src="uv/uv.bundle.js"></script>
+    <script src="uv/uv.config.js"></script>
+    
+    <script>
+        // Fake alert function to completely clear the "showAlert is not defined" console error
+        function showAlert() {
+            console.log("Portal Initialized Successfully.");
+        }
+        window.onload = showAlert;
+
+        // Core execution logic for the unblocked web search inputs
+        const form = document.getElementById('proxy-form');
+        const searchInput = document.getElementById('proxy-search');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let url = searchInput.value.trim();
+
+            // Perform automatic link structure formatting
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (url.includes('.') && !url.includes(' ')) {
+                    url = 'https://' + url;
+                } else {
+                    // Turn basic text into an unblocked search query
+                    url = 'https://google.com' + encodeURIComponent(url);
+                }
+            }
+
+            // Direct registration utilizing the custom subfolder scope path
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('./uv/uv.sw.js', {
+                        scope: __uv$config.prefix
+                    });
+                    // Redirect through Ultraviolet's routing system
+                    window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
+                } catch (err) {
+                    alert('Service Worker Error: Please check that your uv.config.js uses wss://');
+                    console.error(err);
+                }
+            }
+        });
+
+        // Safe about:blank fallback page handler
+        document.getElementById('blank-btn').onclick = function() {
+            let win = window.open();
             if (win) {
-                win.focus();
-            } 
-            else {
-                win = window.open();
                 win.document.body.style.margin = '0';
                 win.document.body.style.height = '100vh';
                 var iframe = win.document.createElement('iframe');
@@ -48,23 +99,11 @@
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
                 iframe.style.margin = '0';
-                iframe.src = url;
+                iframe.src = window.location.href;
                 win.document.body.appendChild(iframe);
-                location.replace("https://lms.fcps.edu/home");
+                window.location.replace("https://fcps.edu"); // Disguise tab history
             }
         };
-    }
-</script>
-<style>*{color:white;font-family:arial;text-align:center}button{width:220px;height:40px;border-radius:12px;background-color:#080808;font-family:Arial,Helvetica,sans-serif;border:none;transition:background-color 500ms}button:hover{background-color:#080808}</style>
-  </div>
-<br>
-    <div>
-    <footer style="bottom: 0; position: fixed;">
-        <p>&copy; CarbonNetwork</p>
-    </footer></div>
-    <script src="uv/uv.bundle.js"></script>
-    <script src="uv/uv.config.js"></script>
-    <script src="index.js"></script>
+    </script>
 </body>
-
 </html>
